@@ -130,21 +130,6 @@ To prevent these risks, a **cryptographically signed firmware header** can be ad
 
 ---
 
-### Firmware Header Structure
-
-```c
-#pragma pack(push,1)
-typedef struct {
-    uint32_t magic;          // Fixed identifier: 0xF07A10AD
-    uint32_t fw_version;     // Firmware version number
-    uint32_t fw_size;        // Firmware payload size in bytes
-    uint8_t  fw_sha256[32];  // SHA-256 hash of the firmware payload
-    uint8_t  pubkey_id;      // Public key ID for signature verification
-    uint8_t  reserved[15];   // Padding for 64 bytes before signature
-    uint8_t  sig[64];        // Ed25519 signature over (header_without_sig || firmware payload)
-} fota_hdr_t;
-#pragma pack(pop)
-
 ### How the System Works
 
 #### Jenkins Build Server
@@ -164,7 +149,6 @@ typedef struct {
 - Verifies the Ed25519 signature with the stored public key matching `pubkey_id`.
 - Proceeds with flashing only if all validations succeed.
 - Rejects the update if verification fails to avoid bricking.
-
 
 ---
 
