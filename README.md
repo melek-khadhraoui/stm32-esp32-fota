@@ -107,7 +107,7 @@ The STM32 validates the firmware’s integrity before flashing, ensuring secure 
 
 Check out this quick demo of the FOTA update process in action:
 
-[![Watch the demo](https://img.youtube.com/vi/VIDEO_ID/hqdefault.jpg)]((https://www.youtube.com/shorts/dUoxlsj4Zmo))
+[![Watch the demo](https://www.youtube.com/shorts/dUoxlsj4Zmo))
 
 ---
 
