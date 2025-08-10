@@ -111,6 +111,63 @@ Check out this quick demo of the FOTA update process in action:
 
 ---
 
+
+## Future Perspective: Secure Firmware Update with Signed Header
+
+### Why add a signed firmware header?
+
+In any Firmware Over-The-Air (FOTA) update system, **security and integrity** are crucial. Without proper protection, attackers could:
+
+- Inject malicious firmware,
+- Corrupt the update process,
+- Or cause devices to malfunction or become unusable ("bricked").
+
+To prevent these risks, a **cryptographically signed firmware header** can be added to each firmware update. This ensures the device:
+
+- Only accepts firmware signed by a trusted source,
+- Verifies the integrity of the entire firmware image,
+- Protects against unauthorized or corrupted updates.
+
+---
+
+### Firmware Header Structure
+
+```c
+#pragma pack(push,1)
+typedef struct {
+    uint32_t magic;          // Fixed identifier: 0xF07A10AD
+    uint32_t fw_version;     // Firmware version number
+    uint32_t fw_size;        // Firmware payload size in bytes
+    uint8_t  fw_sha256[32];  // SHA-256 hash of the firmware payload
+    uint8_t  pubkey_id;      // Public key ID for signature verification
+    uint8_t  reserved[15];   // Padding for 64 bytes before signature
+    uint8_t  sig[64];        // Ed25519 signature over (header_without_sig || firmware payload)
+} fota_hdr_t;
+#pragma pack(pop)
+
+### How the System Works
+
+#### Jenkins Build Server
+
+- Compiles the firmware binary.
+- Calculates the SHA-256 hash of the firmware.
+- Builds the header with all metadata except the signature.
+- Signs the concatenation of the header (without `sig`) and the firmware payload using a private Ed25519 key stored securely in Jenkins.
+- Inserts the signature into the header.
+- Publishes the signed firmware (header + payload) for distribution.
+
+#### STM32 Device
+
+- Receives the signed firmware over UART from ESP32.
+- Parses and validates the header’s `magic` number and firmware version.
+- Computes SHA-256 hash of the received payload and compares it with `fw_sha256`.
+- Verifies the Ed25519 signature with the stored public key matching `pubkey_id`.
+- Proceeds with flashing only if all validations succeed.
+- Rejects the update if verification fails to avoid bricking.
+
+
+---
+
 *This project was created and contributed by **Melek Khadhraoui**,  
     a passionate Embedded Systems Engineering student.*
 
