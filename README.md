@@ -31,7 +31,7 @@ The STM32 validates the firmware’s integrity before flashing, ensuring secure 
 ## How It Works
 
 1. **Binary Push to GitHub**  
-   The developer builds the STM32 firmware binary (`new_application.bin`) locally or in any environment and pushes it to a dedicated GitHub repository (e.g., this repo).
+   The developer builds the STM32 firmware binary (`new_application.bin`) locally or in any environment and pushes it to a dedicated GitHub repository (e.g., my Fota Project repo).
 
 2. **Jenkins Pipeline Trigger**  
    Jenkins monitors the GitHub repository via webhook.  
@@ -61,7 +61,7 @@ The STM32 validates the firmware’s integrity before flashing, ensuring secure 
 
 - **Trigger:** Push binary firmware `.bin` file to GitHub  
 - **Steps:**  
-  - Retrieve latest `.bin` from GitHub repo.(fota project repo in my case)
+  - Retrieve latest `.bin` from GitHub repo.
   - Calculate CRC32 checksum on `.bin` using the included `crc_script.py` Python script for consistent version-controlled checksum calculation.  
   - Publish MQTT messages signaling firmware availability and CRC.
 <img width="1231" height="507" alt="Capture d'écran 2025-08-09 204422" src="https://github.com/user-attachments/assets/97351ccd-85a7-4bf5-88b1-ed763f156c9a" />
